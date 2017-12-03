@@ -1,0 +1,27 @@
+#paragraphes div {
+    position: relative;
+    padding-left: 20px;
+
+}
+#paragraphes p:hover{
+    cursor:pointer;
+}
+textarea{
+    display: block;
+    width:100%;
+}
+#paragraphes p {
+    margin: 0 3px 3px 3px;
+    padding: 0.4em;
+    padding-left: 1.5em;
+    font-size: 1.4em;
+    height: 18px;
+    background-color: #f6f6f6;
+    border: solid #c5c5c5 1px;
+}
+
+.poignee {
+    position: absolute;
+    left: 5px;
+    cursor: move;
+}
