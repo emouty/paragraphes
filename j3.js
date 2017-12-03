@@ -24,30 +24,43 @@ $(document).on("keyup","body",function(leContexte){
 $(document).on(	"keydown",
     "#paragraphes textarea",
     function(leContexe){
-        // Validation d'une saisie
-        if(leContexe.which == 13 ) {
-            // On prépare le nouveau P.
-            var contenuT = $(this).val();
-            var metaT = $(this).data();
-            var jP = $("<p>").html(contenuT).data(metaT);
 
-            // On met à jour ses méta-données
-            // car le contenu a changé
-            jP.data("contenu",contenuT);
+        switch (leContexe.which){
+            // Validation d'une saisie
+            case 13 : {
+                // On prépare le nouveau P.
+                var contenuT = $(this).val();
+                var metaT = $(this).data();
+                var jP = $("<p>").html(contenuT).data(metaT);
 
-            //On envoie une requete au serveur
-            $.getJSON(	DATA,
-                {	"action" : "updateP",
-                    "id": metaT.id,
-                    "contenu" : contenuT},
-                function (oRep){
-                    if (oRep.feedback!="ok") {
-                        alert("Rechargez votre navigateur...");
-                    }
-                });
+                // On met à jour ses méta-données
+                // car le contenu a changé
+                jP.data("contenu", contenuT);
 
-            // On l'insère
-            $(this).replaceWith(jP);
+                //On envoie une requete au serveur
+                $.getJSON(DATA,
+                    {
+                        "action": "updateP",
+                        "id": metaT.id,
+                        "contenu": contenuT
+                    },
+                    function (oRep) {
+                        if (oRep.feedback != "ok") {
+                            alert("Rechargez votre navigateur...");
+                        }
+                    });
+
+                // On l'insère
+                $(this).replaceWith(jP);
+                console.log("code touche");
+                console.log(leContexe.which);
+                break;
+            }
+
+            default : {
+                console.log("code touche");
+                console.log(leContexe.which);
+            }
         }
     });
 
