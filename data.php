@@ -96,7 +96,7 @@ if (isset($_GET["action"]))
 
 			// TODO: il faudrait faire une fonction !
 			
-		// break; 
+		break; 
 
 
 		case "getP" : 
@@ -107,11 +107,12 @@ if (isset($_GET["action"]))
 			$data["paragraphes"] = $res;
 		break;
 
-        case "getArticles":
-            $SQL = "SELECT * FROM article ORDER BY id ASC";
-            $res = parcoursRs(SQLSelect($SQL));
-            $data["feedback"] = "ok";
-            $data["articles"] = $res;
+		case "getArticles":
+			$SQL = "SELECT * FROM article ORDER BY id ASC";
+			$res = parcoursRs(SQLSelect($SQL));
+			$data["feedback"] = "ok";
+			$data["articles"] = $res;
+		break;
 	}
 }
 

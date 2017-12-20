@@ -80,7 +80,7 @@ $(document).ready(function(){
         if (oRep.feedback != "ok") {
             alert("Erreur, veuillez recharger votre navigateur");
         } else {
-            for(i=0;i<oRep.articles.length;i++) {
+            for(i = 0; i < oRep.articles.length; i++) {
                 var jOption = $("<option>").val(oRep.articles[i].id).html(oRep.articles[i].nom);
                 $("#articles").append(jOption);
             }
