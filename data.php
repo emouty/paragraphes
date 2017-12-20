@@ -100,8 +100,9 @@ if (isset($_GET["action"]))
 
 
 		case "getP" : 
+			if (isset($_GET["idArticle"])) $articleId = $_GET["idArticle"];
 			// Renvoie tous les paragraphes de la base de données
-			$SQL = "SELECT * FROM paragraphes ORDER BY ordre ASC"; 
+			$SQL = "SELECT * FROM paragraphes WHERE article = '$articleId' ORDER BY ordre ASC"; 
 			$res = parcoursRs(SQLSelect($SQL));
 			$data["feedback"] = "ok"; 
 			$data["paragraphes"] = $res;
