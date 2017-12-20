@@ -179,3 +179,27 @@ function getP(idArticle) {
             }
         });
 }
+
+function ajouterArticle() {
+    console.log("Ajouter un article");
+
+    let articleName = $('#newArticleName').val();
+    if (!articleName) return;
+
+    $.getJSON("data.php",
+        {
+            "action": "addArticle",
+            "nomArticle": articleName
+        },
+        function (oRep) {
+            // Crée et ajoute l'option dans le select
+            let jOption = $("<option>").val(oRep.id).html(articleName);
+            $("#articles").append(jOption);
+
+            // Selectionne l'option
+            console.log(oRep.id);
+            $("select[name=articles]").val(oRep.id).trigger( "change" );
+            // $(`#articles option[value=${oRep.id}]`).attr('selected','selected').change();
+        }
+    );
+}

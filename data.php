@@ -114,6 +114,17 @@ if (isset($_GET["action"]))
 			$data["feedback"] = "ok";
 			$data["articles"] = $res;
 		break;
+
+	case "addArticle" : 
+			if (isset($_GET["nomArticle"])) $nom = $_GET["nomArticle"]; 
+			if ($nom) {
+				$SQL = "INSERT INTO article(nom) VALUES ('$nom')";
+				$nextId = SQLInsert($SQL);
+				$data["feedback"] = "ok"; 
+				$data["id"] = $nextId; 
+			}
+		break;
+	
 	}
 }
 
