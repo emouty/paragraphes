@@ -93,7 +93,7 @@ $(document).ready(function(){
         if (oRep.feedback != "ok") {
             alert("Erreur, veuillez recharger votre navigateur");
         } else {
-            for(i=0;i<oRep.articles.length;i++) {
+            for(i = 0; i < oRep.articles.length; i++) {
                 var jOption = $("<option>").val(oRep.articles[i].id).html(oRep.articles[i].nom);
                 $("#articles").append(jOption);
             }
@@ -146,7 +146,7 @@ $(document).ready(function(){
         });
 
     // insertion bouton avant paragraphes
-    $("#paragraphes").before(jP);
+    $("#paragraphes").after(jP);
     // On pourrait cloner avec .clone()
 
     // insertion champ entrée texte apres bouton
@@ -168,32 +168,51 @@ $(document).ready(function(){
 
 
 function getP(idArticle) {
-// Envoyer une requete au serveur pour récupérer les P.
+    // Envoyer une requete au serveur pour récupérer les P.
     // en base de données
+
     $.getJSON(	DATA,
-        {"action":"getP"},
+        {	"action" : "getP",
+            "idArticle": idArticle},
         function (oRep){
-
-            /* {"feedback":"ok","paragraphes":[{"id":"1","contenu":"premier","ordre":"1"},...]} */
-
-            if (oRep.feedback != "ok") {
-                alert("Erreur, veuillez recharger votre navigateur");
-            } else {
-                // on les intègre au div des paragraphes
+            if (oRep.feedback!="ok") {
+                alert("Rechargez votre navigateur...");
+            }
+            else {
                 for(i=0;i<oRep.paragraphes.length;i++) {
-                    // oRep.paragraphes[i] contient les méta-données
-                    // du paragraphe i : id, contenu, ordre
-                    if(oRep.paragraphes[i].article == idArticle) {
-                        var jP = $("<p>").html(oRep.paragraphes[i].contenu);
-                        var jSpan = $("<div>").addClass("blockList")
-                            .prepend($("<span>").addClass("poignee ui-icon ui-icon-arrowthick-2-n-s"))
-                            .append(jP);
-                        $("#paragraphes").append(jSpan);
+                    var jP = $("<p>").html(oRep.paragraphes[i].contenu);
+                    var jSpan = $("<div>").addClass("blockList")
+                        .prepend($("<span>").addClass("poignee ui-icon ui-icon-arrowthick-2-n-s"))
+                        .append(jP);
+                    $("#paragraphes").append(jSpan);
 
-                        // TODO: y associer leurs méta-données
-                        jP.data(oRep.paragraphes[i]);
-                    }
-                }
+                    // TODO: y associer leurs méta-données
+                    jP.data(oRep.paragraphes[i]);
+                } 
             }
         });
+}
+
+function ajouterArticle() {
+    console.log("Ajouter un article");
+
+    let articleName = $('#newArticleName').val();
+    if (!articleName) return;
+
+    $.getJSON("data.php",
+        {
+            "action": "addArticle",
+            "nomArticle": articleName
+        },
+        function (oRep) {
+            // Crée et ajoute l'option dans le select
+            let jOption = $("<option>").val(oRep.id).html(articleName);
+            $("#articles").append(jOption);
+
+            // Selectionne l'option
+            console.log(oRep.id);
+            $("select[name=articles]").val(oRep.id).trigger( "change" );
+            // $(`#articles option[value=${oRep.id}]`).attr('selected','selected').change();
+        }
+    );
 }

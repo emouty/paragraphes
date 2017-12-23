@@ -96,22 +96,35 @@ if (isset($_GET["action"]))
 
 			// TODO: il faudrait faire une fonction !
 			
-		// break; 
+		break; 
 
 
 		case "getP" : 
+			if (isset($_GET["idArticle"])) $articleId = $_GET["idArticle"];
 			// Renvoie tous les paragraphes de la base de données
-			$SQL = "SELECT * FROM paragraphes ORDER BY ordre ASC"; 
+			$SQL = "SELECT * FROM paragraphes WHERE article = '$articleId' ORDER BY ordre ASC"; 
 			$res = parcoursRs(SQLSelect($SQL));
 			$data["feedback"] = "ok"; 
 			$data["paragraphes"] = $res;
 		break;
 
-        case "getArticles":
-            $SQL = "SELECT * FROM article ORDER BY id ASC";
-            $res = parcoursRs(SQLSelect($SQL));
-            $data["feedback"] = "ok";
-            $data["articles"] = $res;
+		case "getArticles":
+			$SQL = "SELECT * FROM article ORDER BY id ASC";
+			$res = parcoursRs(SQLSelect($SQL));
+			$data["feedback"] = "ok";
+			$data["articles"] = $res;
+		break;
+
+	case "addArticle" : 
+			if (isset($_GET["nomArticle"])) $nom = $_GET["nomArticle"]; 
+			if ($nom) {
+				$SQL = "INSERT INTO article(nom) VALUES ('$nom')";
+				$nextId = SQLInsert($SQL);
+				$data["feedback"] = "ok"; 
+				$data["id"] = $nextId; 
+			}
+		break;
+	
 	}
 }
 

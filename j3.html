@@ -1,20 +1,29 @@
-<link rel="stylesheet" href="../jquery-ui-1.12.1/jquery-ui.css">
+<link rel="stylesheet" href="libs/jquery-ui-1.12.1/jquery-ui.min.css">
 <link rel="stylesheet" href="j3_style.css">
-<script src="libs/jquery.js" ></script>
-<script src="libs/jquery-ui-1.12.1/jquery-ui.js"></script>
-<script src="j3.js"></script>
 
 <body>
+
 <div class="listeArticle">
     <form action="#">
         <fieldset>
-            <label for="articles">Selectionne un article : </label>
+            <label for="articles">Selectionnez un article : </label>
             <select name="articles" id="articles">
+                <!-- Articles s'affichent ici -->
             </select>
+            <div>
+                <input type="text" id="newArticleName" placeholder="Nom de l'article...">
+                <button onclick="ajouterArticle()">Ajouter l'article</button>
+            </div>
         </fieldset>
     </form>
 </div>
+
 <div id="paragraphes">
+    <!-- Paragraphes s'affichent ici -->
 </div>
+
+<script src="libs/jquery.js" ></script>
+<script src="libs/jquery-ui-1.12.1/jquery-ui.js"></script>
+<script src="j3.js"></script>
 
 </body>
