@@ -1,5 +1,6 @@
 const DATA = "data.php";
 var articleCourrant="";
+var paragraphes = [];
 
 $(document).on(	"click",
     "#paragraphes p",
@@ -8,8 +9,10 @@ $(document).on(	"click",
 
         var contenuP = $(this).html();
         var metaP =  $(this).data();
+        //stockage pour echape
+        paragraphes[$(this).data().id] = $(this);
         // préparer le futur textarea
-        var jT = $("<textarea>")
+        var jT = $("<textarea>").attr('id', )
             .val(contenuP)
             .data(metaP);
 
@@ -18,7 +21,15 @@ $(document).on(	"click",
     });
 $(document).on("keyup","body",function(leContexte){
     if(leContexte.which==27){
-
+        var textarea = document.getElementsByTagName("textarea");
+        for( var i = 0 ; i < textarea.length; i++){
+            var currentP = paragraphes[i];
+            var contenuT = $(currentP).html();
+            var metaT =  $(currentP).data();
+            var jP = $("<p>").html(contenuT).data(metaT);
+            //$("#"+$(textarea[i])[0].id).replaceWith($(paragraphes[i]));
+            console.log($(textarea[i]).prop('id'));
+        }
     }
 })
 $(document).on(	"keydown",
@@ -110,7 +121,7 @@ $(document).ready(function(){
         .click(function(){
             // Ordre du futur P. ?
             // ordre du premier des P. actuels - 1
-            if(articleCourrant != "") {
+            if(articleCourrant !== "") {
                 var jPremier = $("#paragraphes *:first-child");
                 // $("#paragraphes *").first()
                 // $("#paragraphes *:first-child");
@@ -123,6 +134,9 @@ $(document).ready(function(){
                 // Lors du clic sur un bouton,
                 // On insère le P. dans le DOM
                 var contenu = $(this).next().val();
+                if( contenu.replace(/\s+/g, '') === "") {
+                    contenu = "Nouveau paragraphe";
+                }
                 var jP = $("<div>").prepend($("<span>").addClass("poignee ui-icon ui-icon-arrowthick-2-n-s"))
                     .append($("<p>").addClass("ui-state-default").html(contenu).data({
                         "id": 0,
