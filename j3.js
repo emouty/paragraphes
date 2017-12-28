@@ -1,6 +1,7 @@
 const DATA = "data.php";
 var articleCourrant="";
 var paragraphes = [];
+var mode='lecture';
 
 $(document).on(	"click",
     "#paragraphes p",
@@ -12,7 +13,8 @@ $(document).on(	"click",
         //stockage pour echape
         paragraphes[$(this).data().id] = $(this);
         // préparer le futur textarea
-        var jT = $("<textarea>").attr('id', )
+        var jT = $("<textarea>")
+            .attr('id',$(this).data().id)
             .val(contenuP)
             .data(metaP);
 
@@ -116,7 +118,7 @@ $(document).ready(function(){
 
 
     // Insérer un bouton + avant le div des paragraphes
-    var jP = $("<input type='button'/>")
+    var jP = $("<input type='button'/>").addClass('edition').hide()
         .val("+")
         .click(function(){
             // Ordre du futur P. ?
@@ -156,6 +158,22 @@ $(document).ready(function(){
                         jP.html(oRep.content);
                     }
                 );
+
+                $("#paragraphes *:first-child").focus(function (){
+                    // clic sur un futur P.
+
+                    var contenuP = $(this).html();
+                    var metaP =  $(this).data();
+                    //stockage pour echape
+                    paragraphes[$(this).data().id] = $(this);
+                    // préparer le futur textarea
+                    var jT = $("<textarea>").attr('id', )
+                        .val(contenuP)
+                        .data(metaP);
+
+                    // insertion dans le DOM
+                    $(this).replaceWith(jT);
+                });
             }
         });
 
@@ -164,7 +182,8 @@ $(document).ready(function(){
     // On pourrait cloner avec .clone()
 
     // insertion champ entrée texte apres bouton
-    jP.after("<input type='text' />");
+    var jInput = $("<input type='text' />").addClass('edition').hide();
+    jP.after(jInput);
 
     $("#paragraphes").sortable();
     $("#paragraphes").disableSelection();
@@ -173,7 +192,9 @@ $(document).ready(function(){
             $("#paragraphes").empty();
             articleCourrant = data.item.value;
             getP(articleCourrant);
-
+            if($('#switch').css('display') === 'none') {
+                $('#switch').show();
+            }
         }
     });
 
@@ -229,4 +250,20 @@ function ajouterArticle() {
             // $(`#articles option[value=${oRep.id}]`).attr('selected','selected').change();
         }
     );
+}
+
+function switchMode() {
+    console.log("function");
+    if(mode === 'lecture') {
+        //$('.edition').show();
+        console.log("function if1");
+        $(this).text('mode lecture');
+        mode ='edition';
+    }
+    else if(mode === 'edition'){
+        //$('.edition').hide();
+        console.log("function if2");
+        $(this).text('mode edition');
+        mode='lecture';
+    }
 }
