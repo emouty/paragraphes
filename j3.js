@@ -7,20 +7,50 @@ $(document).on(	"click",
     "#paragraphes p",
     function (){
         // clic sur un futur P.
+        if(mode === 'edition') {
+            var contenuP = $(this).html();
+            var metaP = $(this).data();
+            //stockage pour echape
+            paragraphes[$(this).data().id] = $(this);
+            // préparer le futur textarea
+            var jT = $("<textarea>")
+                .attr('id', $(this).data().id)
+                .val(contenuP)
+                .data(metaP);
 
-        var contenuP = $(this).html();
-        var metaP =  $(this).data();
-        //stockage pour echape
-        paragraphes[$(this).data().id] = $(this);
-        // préparer le futur textarea
-        var jT = $("<textarea>")
-            .attr('id',$(this).data().id)
-            .val(contenuP)
-            .data(metaP);
-
-        // insertion dans le DOM
-        $(this).replaceWith(jT);
+            // insertion dans le DOM
+            $(this).replaceWith(jT);
+        }
     });
+
+$("div ").hover(
+    function() {
+        $( this ).find(".trash").show();
+    }, function() {
+        $( this ).find(".trash").hide();
+    }
+);
+
+$(document).on(	"click",
+    ".trash",
+    function (){
+        let parent = $(this).parent();
+
+        $.getJSON("data.php",
+            {
+                "action": "delP",
+                "id": $(this).siblings("p").data().id
+            },function (oRep) {
+                if (oRep.feedback !== "ok") {
+                    alert("Rechargez votre navigateur...");
+                } else {
+                    parent.closest(" div ").remove();
+                }
+            });
+
+
+});
+
 $(document).on("keyup","body",function(leContexte){
     if(leContexte.which==27){
         var textarea = document.getElementsByTagName("textarea");
@@ -29,7 +59,7 @@ $(document).on("keyup","body",function(leContexte){
             var contenuT = $(currentP).html();
             var metaT =  $(currentP).data();
             var jP = $("<p>").html(contenuT).data(metaT);
-            //$("#"+$(textarea[i])[0].id).replaceWith($(paragraphes[i]));
+            $("#"+$(textarea[i])[0].id).replaceWith(jP);
             console.log($(textarea[i]).prop('id'));
         }
     }
@@ -65,14 +95,10 @@ $(document).on(	"keydown",
 
                 // On l'insère
                 $(this).replaceWith(jP);
-                console.log("code touche");
-                console.log(leContexe.which);
                 break;
             }
 
             default : {
-                console.log("code touche");
-                console.log(leContexe.which);
             }
         }
     });
@@ -112,7 +138,7 @@ $(document).ready(function(){
             }
         }
     });
-    //$("#articles").val('1');
+
 
 
 
@@ -124,7 +150,8 @@ $(document).ready(function(){
             // Ordre du futur P. ?
             // ordre du premier des P. actuels - 1
             if(articleCourrant !== "") {
-                var jPremier = $("#paragraphes *:first-child");
+                var jPremier = $("#paragraphes *:first-child").find("p");
+                //console.log($("#paragraphes *:first-child").find("p").data("ordre"));
                 // $("#paragraphes *").first()
                 // $("#paragraphes *:first-child");
                 // ATTENTION AUX PERFORMANCES !
@@ -144,7 +171,7 @@ $(document).ready(function(){
                         "id": 0,
                         "ordre": ordreNouveau,
                         "contenu": contenu
-                    }));
+                    })).prepend($("<span>").addClass("trash ui-icon ui-icon-trash").hide());
 
                 $("#paragraphes").prepend(jP);
                 $.getJSON("data.php",
@@ -159,21 +186,21 @@ $(document).ready(function(){
                     }
                 );
 
-                $("#paragraphes *:first-child").focus(function (){
                     // clic sur un futur P.
 
-                    var contenuP = $(this).html();
-                    var metaP =  $(this).data();
+                    var contenuP = $("#paragraphes div:first-child p").text();
+                    var metaP =  $("#paragraphes div:first-child").data();
                     //stockage pour echape
-                    paragraphes[$(this).data().id] = $(this);
+                    paragraphes[$("#paragraphes div:first-child").data().id] = $("#paragraphes div:first-child");
                     // préparer le futur textarea
-                    var jT = $("<textarea>").attr('id', )
+                    var jT = $("<textarea>").attr('id', $("#paragraphes div:first-child").data().id)
                         .val(contenuP)
                         .data(metaP);
 
                     // insertion dans le DOM
-                    $(this).replaceWith(jT);
-                });
+                    $("#paragraphes div:first-child p").replaceWith(jT);
+
+                    $("#paragraphes textarea").focus().select();
             }
         });
 
@@ -185,7 +212,9 @@ $(document).ready(function(){
     var jInput = $("<input type='text' />").addClass('edition').hide();
     jP.after(jInput);
 
-    $("#paragraphes").sortable();
+    $("#paragraphes").sortable({
+        handle:".poignee"
+    });
     $("#paragraphes").disableSelection();
     $("#articles").selectmenu({
         select: function( event, data ) {
@@ -218,7 +247,8 @@ function getP(idArticle) {
                     var jP = $("<p>").html(oRep.paragraphes[i].contenu);
                     var jSpan = $("<div>").addClass("blockList")
                         .prepend($("<span>").addClass("poignee ui-icon ui-icon-arrowthick-2-n-s"))
-                        .append(jP);
+                        .append(jP).prepend($("<span>")
+                            .addClass("trash ui-icon ui-icon-trash").hide());
                     $("#paragraphes").append(jSpan);
 
                     // TODO: y associer leurs méta-données
@@ -229,8 +259,6 @@ function getP(idArticle) {
 }
 
 function ajouterArticle() {
-    console.log("Ajouter un article");
-
     let articleName = $('#newArticleName').val();
     if (!articleName) return;
 
@@ -244,26 +272,38 @@ function ajouterArticle() {
             let jOption = $("<option>").val(oRep.id).html(articleName);
             $("#articles").append(jOption);
 
+
+            //mode edition
+
+            $('.edition').show();
+            $('#switch').html('mode lecture');
+            mode ='edition';
             // Selectionne l'option
-            console.log(oRep.id);
-            $("select[name=articles]").val(oRep.id).trigger( "change" );
-            // $(`#articles option[value=${oRep.id}]`).attr('selected','selected').change();
-        }
+            $("#articles-button").attr('aria-activedescendant',"ui-id-"+oRep.id)
+                .attr('aria-labelledby',"ui-id-"+oRep.id);
+            $("#articles-button").find(".ui-selectmenu-text").html(articleName);
+
+            $("#paragraphes").empty();
+            articleCourrant = oRep.id;
+            getP(articleCourrant);
+            if($('#switch').css('display') === 'none') {
+                $('#switch').show();
+            }
+
+     }
     );
+
 }
 
 function switchMode() {
-    console.log("function");
     if(mode === 'lecture') {
-        //$('.edition').show();
-        console.log("function if1");
-        $(this).text('mode lecture');
+        $('.edition').show();
+        $('#switch').html('mode lecture');
         mode ='edition';
     }
     else if(mode === 'edition'){
-        //$('.edition').hide();
-        console.log("function if2");
-        $(this).text('mode edition');
+        $('.edition').hide();
+        $('#switch').html('mode edition');
         mode='lecture';
     }
 }
