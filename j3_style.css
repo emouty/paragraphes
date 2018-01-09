@@ -29,3 +29,9 @@ textarea{
 #switch {
     display: none;
 }
+
+.trash {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+}
